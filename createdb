@@ -1,0 +1,20 @@
+#!/bin/bash
+###this script creates a database if not existed
+##Exit codes
+##	0:	Normal termination
+##	1:	DataBase Already Exists
+
+
+
+source Database_config
+
+function create_db {
+	DATABASE_CHECK=$(mysql -u ${DBSETTINGS["DBUSER"]} -p${DBSETTINGS["DBPASS"]} -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '${DBSETTINGS["DBNAME"]}';")
+	if [ "$DATABASE_CHECK" ] 
+	then
+		echo 'Database is already exsits!'
+		exit 1
+	fi
+	mysql -u ${DBSETTINGS["DBUSER"]} -p${DBSETTINGS["DBPASS"]} -e "CREATE DATABASE IF NOT EXISTS ${DBSETTINGS["DBNAME"]};"
+	echo "Database created"
+}

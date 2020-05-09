@@ -1,0 +1,22 @@
+#!/bin/bash
+###this script creates user of the  database if not existed
+##Exit codes
+##	0:	Normal termination
+##	1:	Username is exited
+
+source Database_config
+
+ 
+function create_user {
+
+	USER_CHECK=$(echo $(mysql -u${DBSETTINGS["DBUSER"]} -p${DBSETTINGS["DBPASS"]} -e "SELECT 1 FROM mysql.user WHERE user = '${DBSETTINGS["DBUSERNAME"]}';") )
+	echo $USER_CHECK
+	if [[ "$USER_CHECK" ]];then
+		echo "this username is exited!"
+		exit 1;
+	else
+		mysql -u ${DBSETTINGS["DBUSER"]} -p${DBSETTINGS["DBPASS"]} -e "CREATE USER '${DBSETTINGS["DBUSERNAME"]}'@'localhost' IDENTIFIED BY '${DBSETTINGS["USERPASS"]}';"
+		echo "User created"
+	fi
+}
+

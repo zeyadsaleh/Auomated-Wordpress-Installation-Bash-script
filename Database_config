@@ -1,0 +1,12 @@
+declare -A DBSETTINGS
+
+################ Only changes go here
+DBSETTINGS["DBHOST"]="localhost"
+DBSETTINGS["DBUSER"]="root"
+DBSETTINGS["DBPASS"]=""
+DBSETTINGS["DBNAME"]=""
+###The name of the username of this database and his password
+DBSETTINGS["DBUSERNAME"]=""
+DBSETTINGS["USERPASS"]=""
+
+#########################################################

@@ -1,0 +1,19 @@
+#!/bin/bash 
+### This scrip creates a database for the WordPress and make user f this database with full privilages on it
+##Exit codes
+##	0:	Normal termination
+
+source Database_config
+source createdb
+source createuser
+source grantuser
+
+
+###Create a mysql database
+create_db
+###Create a user for this database
+create_user
+###Grant the user full privileges on that database
+grant_user
+mysql -u ${DBSETTINGS["DBUSER"]} -p${DBSETTINGS["DBPASS"]} -e "FLUSH PRIVILEGES;"
+echo "WordPress Database Has Been Created Successfully!"

@@ -1,0 +1,39 @@
+#!/bin/bash 
+###this script make the makes the database of the wordpress project, handle the installation of wordpress and make backup of the wordpress database and its project directory
+##Exit codes
+##	0:	Normal termination
+##	1:	Permission denaiel
+
+
+source Database_creation
+source WordPress_Installation
+source Database_config
+
+CURTIME=`date "+%Y-%m-%d-%H-%M"`
+BACKUP_DB_DIR=/backup/db
+BACKUP_WEBSITE_DIR=/backup/website
+
+if [[ $EUID -ne 0 ]]; 
+then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+
+##### Make sure output directory exists
+
+if [ ! -d $BACKUP_DB_DIR ]; 
+then
+    mkdir -p $BACKUP_DB_DIR
+fi
+if [ ! -d $BACKUP_WEBSITE_DIR ]; 
+then
+    mkdir -p $BACKUP_WEBSITE_DIR
+fi
+
+### Create backup
+crontab -l > mycron
+echo "* */12 * * * *  mysqldump --host=${DBSETTINGS["DBHOST"]} --user=${DBSETTINGS["DBUSER"]} --password=${DBSETTINGS["DBPASS"]} ${DBSETTINGS["DBNAME"]}  > $BACKUP_DIR/"${CURTIME}" " >> mycron
+echo "* */12 * * * * echo  cp -r /var/www/html/wordpress /backup/website/"${CURTIME}" " >> mycron
+crontab mycron
+rm mycron

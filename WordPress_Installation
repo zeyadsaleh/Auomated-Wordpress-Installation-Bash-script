@@ -1,0 +1,42 @@
+#!/bin/bash 
+###this script handles the installation of wordpress and its configrations
+##Exit codes
+##	0:	Normal termination
+##	1:	Download Fail
+##	2:	Directory already exits in the DocumentRoot
+##	3:	Permission denaiel
+
+
+
+###Install WordPress project
+COMPRESSED_FILE=$(wget https://wordpress.org/latest.tar.gz)
+###de-compress this project
+###check if the download completed
+if [ "$COMPRESSED_FILE" ] 
+then
+    echo 'Download Fail!'
+    exit 1
+fi
+###check if the directory exits in the DocumentRoot
+FILE=/var/www/html/wordpress
+if [ "$FILE" ]; 
+then
+    rm latest.tar.gz -f 
+    echo "$FILE already exist, please rename the wordpress directory or remove it"
+    exit 2
+fi
+###check if he doesn't have permission on the DocumentRoot
+if [[ $EUID -ne 0 ]]; 
+then
+   echo "This script must be run as root" 
+   exit 3
+fi
+###move this file to the DocumentRoot
+tar -xzvf latest.tar.gz
+rm latest.tar.gz -f | mv wordpress/ /var/www/html/
+###copy the wp-config-sample.php to another file called wp-config-php ===>>> the user will modify in that file
+cd /var/www/html/wordpress/ | cp wp-config-sample.php wp-config.php
+###after finishing the configrachtion go to the website
+google-chrome http://localhost/wordpress
+echo "Wordpress Installed!"
+
